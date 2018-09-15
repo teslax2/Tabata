@@ -47,7 +47,7 @@ namespace Tabata.ViewModel
                 if (value != breakTime)
                 {
                     breakTime = value;
-                    OnPropertyChanged("BreakTime");
+                    OnPropertyChanged("BreakTime");                    
                 }
             }
         }
@@ -116,6 +116,8 @@ namespace Tabata.ViewModel
             {
                 StopTimer();
                 System.Diagnostics.Debug.WriteLine("stop");
+                //Audio.Manager.PlayBackgroundMusic("analogAlarm.mp3");
+                DependencyService.Get<IAudioManager>().PlaySound("analogAlarm.mp3");
             }
             else if (Time.Seconds % (breakTime * ExcerciseTime) == 0)
             {
