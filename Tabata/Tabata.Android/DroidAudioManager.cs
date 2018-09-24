@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Android.Media;
-using AudioManager.Droid;
+using Tabata.Droid;
 using Tabata.ViewModel;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(DroidAudioManager))]
-namespace AudioManager.Droid
+namespace Tabata.Droid
 {
     class DroidAudioManager : IAudioManager
     {

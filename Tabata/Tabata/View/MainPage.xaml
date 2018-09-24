@@ -13,13 +13,26 @@
     <StackLayout Padding="10,10">
         <!-- Place new controls here -->
         <Label HorizontalOptions="Center" Text="{Binding Reps, StringFormat='Reps {0}'}"/>
-        <Slider Minimum="0" Maximum="20"  Value="{Binding Reps, Mode=TwoWay}" IsEnabled="{Binding Paused}"/>
+        <Slider Maximum="20" Minimum="1" Scale="1"  Value="{Binding Reps, Mode=TwoWay}" IsEnabled="{Binding Paused}">
+            <Slider.ThumbImage>
+                <OnPlatform x:TypeArguments="FileImageSource" Android="circle.png"/>
+            </Slider.ThumbImage>
+        </Slider>
         <Label HorizontalOptions="Center" Text="{Binding ExcerciseTime, StringFormat='Excersise Time: {0}'}"/>
-        <Slider Minimum="0" Maximum="20"  Value="{Binding ExcerciseTime, Mode=TwoWay }" IsEnabled="{Binding Paused}"/>
+        <Slider Maximum="120" Minimum="0"   Value="{Binding ExcerciseTime, Mode=TwoWay }" IsEnabled="{Binding Paused}">
+            <Slider.ThumbImage>
+                <OnPlatform x:TypeArguments="FileImageSource" Android="circle.png"/>
+            </Slider.ThumbImage>
+        </Slider>
         <Label HorizontalOptions="Center" Text="{Binding BreakTime, StringFormat='Break Time: {0}'}"/>
-        <Slider Minimum="0" Maximum="20"  Value="{Binding BreakTime, Mode=TwoWay}" IsEnabled="{Binding Paused}"/>
-        <Label Text="{Binding Time.TotalSeconds}" HorizontalOptions="Center" Margin="0,50,0,0" FontSize="50" FontAttributes="Bold"/>
-        <BoxView VerticalOptions="FillAndExpand"/>
+        <Slider Maximum="20" Minimum="0"   Value="{Binding BreakTime, Mode=TwoWay}" IsEnabled="{Binding Paused}">
+            <Slider.ThumbImage>
+                <OnPlatform x:TypeArguments="FileImageSource" Android="circle.png"/>
+            </Slider.ThumbImage>
+        </Slider>
+        <Label Text="{Binding Time.TotalSeconds}" HorizontalOptions="Center" 
+               VerticalOptions="FillAndExpand" VerticalTextAlignment="Center" FontSize="50" FontAttributes="Bold"/>
+        <ProgressBar Progress="{Binding Progress}" />
         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
             <Button Text="Start" Command="{Binding Start}" IsEnabled="{Binding Paused}"/>
             <Button Text="Pause" Command="{Binding Stop}" IsVisible="{Binding Paused, Converter={StaticResource InvertBool}}" />
