@@ -25,21 +25,5 @@ namespace Tabata.Droid
             LoadApplication(new App());
             Instance = this;
         }
-
-        public override void OnBackPressed()
-        {
-            Android.Content.IDialogInterfaceOnClickListener handler = null;
-            var dialog = new AlertDialog.Builder(this)
-                .SetTitle("Really Exit?")
-                .SetMessage("Do you want to exit?")
-                .SetNegativeButton("no", handler)
-                .SetPositiveButton("yes", handlerYes)
-                .Show();
-        }
-
-        private void handlerYes(object sender, DialogClickEventArgs e)
-        {
-            base.OnBackPressed();
-        }
     }
 }

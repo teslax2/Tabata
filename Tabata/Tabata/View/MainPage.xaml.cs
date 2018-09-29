@@ -16,5 +16,11 @@ namespace Tabata.View
 		{
 			InitializeComponent ();
 		}
-	}
+
+        protected override bool OnBackButtonPressed()
+        {
+            Tabata.ViewModel.TabataViewModel.Instance.CloseApp();
+            return base.OnBackButtonPressed();
+        }
+    }
 }

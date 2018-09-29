@@ -15,6 +15,8 @@ namespace Tabata.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
+
+        #region BindableProperties
         private int reps;
         public int Reps {
             get { return reps; }
@@ -27,19 +29,46 @@ namespace Tabata.ViewModel
                 }
             } }
 
-        private int exerciseTime;
+        private Color backgroundColor;
+        public Color BackgroundColor { get { return backgroundColor; } set { if (value != backgroundColor) backgroundColor = value; OnPropertyChanged("BackgroundColor"); } }
+
+        private int excerciseTime;
         public int ExcerciseTime
         {
-            get { return exerciseTime; }
+            get { return excerciseTime; }
             set
             {
-                if (value != exerciseTime)
+                if (value != excerciseTime)
                 {
-                    exerciseTime = value;
+                    if(value<15 && value < excerciseTime)
+                    {
+                        ExcerciseTimeIncrement = 1;
+                    }
+                    else if(value > 9 && value > excerciseTime)
+                    {
+                        ExcerciseTimeIncrement = 5;
+                    }
+                                       
+                    excerciseTime = value;
                     OnPropertyChanged("ExcerciseTime");
                 }
             }
         }
+
+        private int exerciseTimeIncrement;
+        public int ExcerciseTimeIncrement
+        {
+            get { return exerciseTimeIncrement; }
+            set
+            {
+                if (value != exerciseTimeIncrement)
+                {
+                    exerciseTimeIncrement = value;
+                    OnPropertyChanged("ExcerciseTimeIncrement");
+                }
+            }
+        }
+
         private int breakTime;
         public int BreakTime
         {
@@ -50,6 +79,19 @@ namespace Tabata.ViewModel
                 {
                     breakTime = value;
                     OnPropertyChanged("BreakTime");                    
+                }
+            }
+        }
+        private int warmupTime;
+        public int WarmupTime
+        {
+            get { return warmupTime; }
+            set
+            {
+                if (value != warmupTime)
+                {
+                    warmupTime = value;
+                    OnPropertyChanged("WarmupTime");
                 }
             }
         }
@@ -80,13 +122,23 @@ namespace Tabata.ViewModel
         }
 
         private bool _paused;
-        public bool Paused { get { return _paused; } private set { _paused = value; OnPropertyChanged("Paused"); } }
+        public bool Paused
+        {
+            get
+            { return _paused; }
+            private set
+            {
+                _paused = value;
+                OnPropertyChanged("Paused");
+            }
+        }
 
         public static TabataViewModel Instance { get; private set; }
 
         private bool _stopped;
         public bool Stopped { get { return _stopped; } private set { _stopped = value; OnPropertyChanged("Stopped"); } }
 
+        #endregion
 
         public ICommand Start { get; set; }
         public ICommand Stop { get; set; }
@@ -101,6 +153,9 @@ namespace Tabata.ViewModel
 
             //First run to initialize service
             PlaySound();
+
+            //Set color
+            BackgroundColor = Color.Default;
         }
 
         private void StopTimer()
@@ -113,23 +168,25 @@ namespace Tabata.ViewModel
             else
             {
                 Paused = true;
-            }                          
+            }
+            BackgroundColor = Color.Gray;
         }
 
         private void StartTimer()
         {
-            if (Progress >= 1.0)
+            if (Progress >= 1.0 || Progress == 0)
                 ResetTimer();
 
             Paused = false;
             Stopped = false;
             Device.StartTimer(TimeSpan.FromSeconds(1), () => TimerCallback());
-            DependencyService.Get<INotification>().Create("Tabata is running!");
-        }
+            ShowNotification();
+         }
 
         private void ResetTimer()
         {
-            Time = TimeSpan.FromSeconds(0);
+            Time = TimeSpan.FromSeconds(WarmupTime*(-1));
+            Progress = 0;
         }
 
         private bool TimerCallback()
@@ -141,6 +198,7 @@ namespace Tabata.ViewModel
 
             Time += TimeSpan.FromSeconds(1);
             Progress = Time.TotalSeconds / (Reps * ExcerciseTime + (Reps - 1) * BreakTime);
+            ShowNotification(String.Format("Time passed: {0}", Time.TotalSeconds));
 
             for(int x = Reps; x >= 1; x--)
             {
@@ -148,6 +206,7 @@ namespace Tabata.ViewModel
                 if (Time.TotalSeconds == (x*ExcerciseTime+(x-1)*BreakTime))
                 {
                     PlaySound();
+                    BackgroundColor = Color.Gray;
                     if (Time.TotalSeconds == (Reps * ExcerciseTime + (Reps - 1) * BreakTime))
                     {
                         Stopped = true;
@@ -160,7 +219,17 @@ namespace Tabata.ViewModel
                 else if (Time.TotalSeconds == (x * ExcerciseTime + x * BreakTime))
                 {
                     PlaySound();
+                    BackgroundColor = Color.LimeGreen;
                 }
+                //Played at warmup
+                else if (Time.TotalSeconds <= 0)
+                {
+                    PlaySound();
+                }
+
+                //Change color at start of excersise
+                if(Time.TotalSeconds == 0)
+                    BackgroundColor = Color.LimeGreen;
             }
             
             return true;
@@ -175,6 +244,16 @@ namespace Tabata.ViewModel
         {
             Paused = true;
             DependencyService.Get<INotification>().Hide();
+        }
+
+        internal void ShowNotification()
+        {
+            DependencyService.Get<INotification>().Create("Tabata is running!");
+        }
+
+        internal void ShowNotification(string message)
+        {
+            DependencyService.Get<INotification>().Create(message);
         }
     }
 }
