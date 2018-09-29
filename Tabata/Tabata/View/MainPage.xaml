@@ -3,36 +3,63 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModel="clr-namespace:Tabata.ViewModel"
              xmlns:view1="clr-namespace:Tabata.View"
+             BackgroundColor="{Binding BackgroundColor}"
              x:Class="Tabata.View.MainPage">
     <ContentPage.BindingContext>
-        <viewModel:TabataViewModel Reps="12" ExcerciseTime="10" BreakTime="5"/>
+        <viewModel:TabataViewModel Reps="12" ExcerciseTime="10" BreakTime="5" WarmupTime="5" ExcerciseTimeIncrement="5"/>
     </ContentPage.BindingContext>
     <ContentPage.Resources>
         <view1:InvertBooleanConverter x:Key="InvertBool"/>
+        <view1:TimerConverter x:Key="AbsTime"/>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+            <Setter Property="BorderColor" Value="White"/>
+            <Setter Property="BorderWidth" Value="2"/>
+            <Setter Property="BorderRadius" Value="2"/>
+        </Style>
+        <Style x:Key="LabelStyle" TargetType="Label">
+        </Style>
+        <Style x:Key="EntryStyle" TargetType="Entry">
+            <Setter Property="Keyboard" Value="Numeric"/>
+            <Setter Property="MaxLength" Value="2"/>
+            <Setter Property="Margin" Value="10,0,10,0"/>
+        </Style>
     </ContentPage.Resources>
     <StackLayout Padding="10,10">
-        <!-- Place new controls here -->
-        <Label HorizontalOptions="Center" Text="{Binding Reps, StringFormat='Reps {0}'}"/>
-        <Slider Maximum="20" Minimum="1" Scale="1"  Value="{Binding Reps, Mode=TwoWay}" IsEnabled="{Binding Paused}">
-            <Slider.ThumbImage>
-                <OnPlatform x:TypeArguments="FileImageSource" Android="circle.png"/>
-            </Slider.ThumbImage>
-        </Slider>
-        <Label HorizontalOptions="Center" Text="{Binding ExcerciseTime, StringFormat='Excersise Time: {0}'}"/>
-        <Slider Maximum="120" Minimum="0"   Value="{Binding ExcerciseTime, Mode=TwoWay }" IsEnabled="{Binding Paused}">
-            <Slider.ThumbImage>
-                <OnPlatform x:TypeArguments="FileImageSource" Android="circle.png"/>
-            </Slider.ThumbImage>
-        </Slider>
-        <Label HorizontalOptions="Center" Text="{Binding BreakTime, StringFormat='Break Time: {0}'}"/>
-        <Slider Maximum="20" Minimum="0"   Value="{Binding BreakTime, Mode=TwoWay}" IsEnabled="{Binding Paused}">
-            <Slider.ThumbImage>
-                <OnPlatform x:TypeArguments="FileImageSource" Android="circle.png"/>
-            </Slider.ThumbImage>
-        </Slider>
-        <Label Text="{Binding Time.TotalSeconds}" HorizontalOptions="Center" 
-               VerticalOptions="FillAndExpand" VerticalTextAlignment="Center" FontSize="50" FontAttributes="Bold"/>
+        <!-- Exercises -->
+        <StackLayout Orientation="Horizontal">
+            <Label Text="Exercises" VerticalTextAlignment="Center" Style="{StaticResource LabelStyle}"/>
+            <Stepper Maximum="20" Minimum="1" Value="{Binding Reps, Mode=TwoWay}" IsEnabled="{Binding Paused}" 
+                     HorizontalOptions="EndAndExpand"/>
+            <Entry Text="{Binding Reps, Mode=TwoWay}" IsEnabled="{Binding Paused}" Style="{StaticResource EntryStyle}"/>
+        </StackLayout>
+        <!-- Exercise time -->
+        <StackLayout  Orientation="Horizontal">
+            <Label Text="Exercise time" VerticalTextAlignment="Center" Style="{StaticResource LabelStyle}"/>
+            <Stepper Maximum="120" Minimum="0" Increment="{Binding ExcerciseTimeIncrement}"  
+                     Value="{Binding ExcerciseTime, Mode=TwoWay }" IsEnabled="{Binding Paused}" 
+                     HorizontalOptions="EndAndExpand"/>
+            <Entry Text="{Binding ExcerciseTime, Mode=TwoWay}" IsEnabled="{Binding Paused}"  Style="{StaticResource EntryStyle}"/>
+        </StackLayout>
+        <!-- Break time -->
+        <StackLayout  Orientation="Horizontal">
+            <Label Text="Break time" VerticalTextAlignment="Center" Style="{StaticResource LabelStyle}"/>
+            <Stepper Maximum="20" Minimum="0" Value="{Binding BreakTime, Mode=TwoWay}" IsEnabled="{Binding Paused}" 
+                     HorizontalOptions="EndAndExpand"/>
+            <Entry Text="{Binding BreakTime, Mode=TwoWay}" Placeholder="00" IsEnabled="{Binding Paused}"  Style="{StaticResource EntryStyle}"/>
+        </StackLayout>
+        <!-- Warmup time -->
+        <StackLayout  Orientation="Horizontal">
+            <Label Text="Warmup time" VerticalTextAlignment="Center" Style="{StaticResource LabelStyle}"/>
+            <Stepper Maximum="20" Minimum="0" Value="{Binding WarmupTime, Mode=TwoWay}" IsEnabled="{Binding Paused}" 
+                     HorizontalOptions="EndAndExpand"/>
+            <Entry Text="{Binding WarmupTime, Mode=TwoWay}" Placeholder="00" IsEnabled="{Binding Paused}" Style="{StaticResource EntryStyle}"/>
+        </StackLayout>
+        <!-- Timer -->
+        <Label Text="{Binding Time.TotalSeconds, Converter={StaticResource AbsTime}}" HorizontalOptions="Center" 
+               VerticalOptions="FillAndExpand" VerticalTextAlignment="Center" FontSize="50" FontAttributes="Bold" Style="{StaticResource LabelStyle}"/>
         <ProgressBar Progress="{Binding Progress}" />
+        <!-- Buttons -->
         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
             <Button Text="Start" Command="{Binding Start}" IsEnabled="{Binding Paused}"/>
             <Button Text="Pause" Command="{Binding Stop}" IsVisible="{Binding Paused, Converter={StaticResource InvertBool}}" />

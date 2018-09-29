@@ -42,8 +42,9 @@ namespace Tabata.Droid
                           .SetContentIntent(pendingIntent) // Start up this activity when the user clicks the intent.
                           .SetContentTitle("Tabata is running!") // Set the title
                           .SetNumber(count) // Display the count in the Content Info
-                          .SetSmallIcon(Resource.Drawable.ss) // This is the icon to display
+                          .SetSmallIcon(Resource.Drawable.tabata) // This is the icon to display
                           .SetContentText(message); // the message to display.
+            
 
             // Finally, publish the notification:
             notificationManager = NotificationManagerCompat.From(Android.App.Application.Context);
