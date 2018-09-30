@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -151,9 +149,6 @@ namespace Tabata.ViewModel
             Paused = true;
             Instance = this;
 
-            //First run to initialize service
-            PlaySound();
-
             //Set color
             BackgroundColor = Color.Default;
         }
@@ -169,7 +164,7 @@ namespace Tabata.ViewModel
             {
                 Paused = true;
             }
-            BackgroundColor = Color.Gray;
+            BackgroundColor = Color.Default;
         }
 
         private void StartTimer()
@@ -205,12 +200,13 @@ namespace Tabata.ViewModel
                 //Played at excersise complete
                 if (Time.TotalSeconds == (x*ExcerciseTime+(x-1)*BreakTime))
                 {
-                    PlaySound();
-                    BackgroundColor = Color.Gray;
+                    PlaySound(AudioEnum.Stop);
+                    BackgroundColor = Color.Default;
                     if (Time.TotalSeconds == (Reps * ExcerciseTime + (Reps - 1) * BreakTime))
                     {
                         Stopped = true;
                         Paused = true;
+                        ShowNotification("Training completed!");
                         return false;
                     }
                     return true;
@@ -218,32 +214,54 @@ namespace Tabata.ViewModel
                 //Played at excersise start
                 else if (Time.TotalSeconds == (x * ExcerciseTime + x * BreakTime))
                 {
-                    PlaySound();
+                    PlaySound(AudioEnum.Start);
                     BackgroundColor = Color.LimeGreen;
                 }
                 //Played at warmup
                 else if (Time.TotalSeconds <= 0)
                 {
-                    PlaySound();
+                    PlaySound(AudioEnum.Pre);
                 }
 
                 //Change color at start of excersise
                 if(Time.TotalSeconds == 0)
+                {
                     BackgroundColor = Color.LimeGreen;
+                    PlaySound(AudioEnum.Start);
+                }
+                    
             }
             
             return true;
         }
 
-        private void PlaySound()
+        private void PlaySound(AudioEnum audio)
         {
-            Task.Run(async () => { await DependencyService.Get<IAudioManager>().PlaySound("Ring.mp3"); }).ConfigureAwait(false);            
+            string audioFileName;
+
+            switch (audio)
+            {
+                case AudioEnum.Pre:
+                    audioFileName = "pre.mp3";
+                    break;
+                case AudioEnum.Start:
+                    audioFileName = "start.mp3";
+                    break;
+                case AudioEnum.Stop:
+                    audioFileName = "finish.mp3";
+                    break;
+                default:
+                    audioFileName = "pre.mp3";
+                    break;
+            }
+
+            Task.Run(async () => { await DependencyService.Get<IAudioManager>().PlaySound(audioFileName); }); 
         }
 
         internal void CloseApp()
         {
             Paused = true;
-            DependencyService.Get<INotification>().Hide();
+            HideNotification();
         }
 
         internal void ShowNotification()
@@ -254,6 +272,11 @@ namespace Tabata.ViewModel
         internal void ShowNotification(string message)
         {
             DependencyService.Get<INotification>().Create(message);
+        }
+
+        internal void HideNotification()
+        {
+            DependencyService.Get<INotification>().Hide();
         }
     }
 }

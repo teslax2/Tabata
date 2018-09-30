@@ -1,11 +1,8 @@
 ﻿using Android.App;
-using Android.Content.Res;
 using Android.OS;
 using Tabata.ViewModel;
 using Xamarin.Forms;
-using TaskStackBuilder = Android.Support.V4.App;
 using Android.Content;
-using System;
 using Android.Support.V4.App;
 
 [assembly: Dependency(typeof(Tabata.Droid.Notification))]
