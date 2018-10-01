@@ -72,7 +72,7 @@ namespace Tabata.Droid
         public DroidAudioManager()
         {
             var attributes = new AudioAttributes.Builder()
-                .SetUsage(AudioUsageKind.Game)
+                .SetUsage(AudioUsageKind.Media)
                 .SetContentType(AudioContentType.Music)
                 .Build();
 
@@ -94,6 +94,7 @@ namespace Tabata.Droid
 
         public void ActivateAudioSession()
         {
+            LoadSounds();
             //todo
         }
 
@@ -184,6 +185,22 @@ namespace Tabata.Droid
 
             return _soundPool.Play(_sounds[filename], defaultVolume, defaultVolume, priority, isLooping ? -1 : 0, 1f);
 
+        }
+
+        private async Task LoadSounds(int priority=0)
+        {
+            var files = await Android.App.Application.Context.Assets.ListAsync(SoundPath);
+            foreach(var filename in files)
+            {
+                if (!_sounds.ContainsKey(filename))
+                {
+                    var file = Android.App.Application.Context.Assets.OpenFd(Path.Combine(SoundPath, filename));
+                    var soundId = await _soundPool.LoadAsync(file, priority);
+                    if (soundId == 0)
+                        return;
+                    _sounds.Add(filename, soundId);
+                }
+            }
         }
 
         #endregion
