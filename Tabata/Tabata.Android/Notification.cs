@@ -50,7 +50,8 @@ namespace Tabata.Droid
 
         public void Hide()
         {
-            notificationManager.CancelAll();
+            if (notificationManager != null)
+                notificationManager.CancelAll();
         }
 
         public void Update(string message)

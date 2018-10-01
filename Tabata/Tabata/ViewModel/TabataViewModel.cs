@@ -278,5 +278,22 @@ namespace Tabata.ViewModel
         {
             DependencyService.Get<INotification>().Hide();
         }
+
+        internal void LoadSettings()
+        {
+            var settings = Serializer.Deserialize<Settings>();
+            if (settings == null)
+                return;
+            Reps = settings.Reps;
+            ExcerciseTime = settings.ExcersiseTime;
+            BreakTime = settings.BreakTime;
+            WarmupTime = settings.WarmupTime;
+        }
+
+        internal void SaveSetting()
+        {
+            var settings = new Settings() { Reps = this.Reps, BreakTime = this.BreakTime, ExcersiseTime = this.ExcerciseTime, WarmupTime = this.WarmupTime };
+            var result = Serializer.Serialize<Settings>(settings);
+        }
     }
 }

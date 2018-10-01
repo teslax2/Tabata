@@ -19,11 +19,13 @@ namespace Tabata
         protected override void OnStart()
         {
             // Handle when your app starts
+            TabataViewModel.Instance.LoadSettings();
         }
 
         protected override void OnSleep()
         {
             // Handle when your app sleeps
+            TabataViewModel.Instance.SaveSetting();
         }
 
         protected override void OnResume()

@@ -31,7 +31,7 @@
             <Label Text="Exercises" VerticalTextAlignment="Center" Style="{StaticResource LabelStyle}"/>
             <Stepper Maximum="20" Minimum="1" Value="{Binding Reps, Mode=TwoWay}" IsEnabled="{Binding Paused}" 
                      HorizontalOptions="EndAndExpand"/>
-            <Entry Text="{Binding Reps, Mode=TwoWay}" IsEnabled="{Binding Paused}" Style="{StaticResource EntryStyle}"/>
+            <Entry Text="{Binding Reps, Mode=TwoWay}" Placeholder="00" IsEnabled="{Binding Paused}" Style="{StaticResource EntryStyle}"/>
         </StackLayout>
         <!-- Exercise time -->
         <StackLayout  Orientation="Horizontal">
@@ -39,7 +39,7 @@
             <Stepper Maximum="120" Minimum="0" Increment="{Binding ExcerciseTimeIncrement}"  
                      Value="{Binding ExcerciseTime, Mode=TwoWay }" IsEnabled="{Binding Paused}" 
                      HorizontalOptions="EndAndExpand"/>
-            <Entry Text="{Binding ExcerciseTime, Mode=TwoWay}" IsEnabled="{Binding Paused}"  Style="{StaticResource EntryStyle}"/>
+            <Entry Text="{Binding ExcerciseTime, Mode=TwoWay}" Placeholder="00" IsEnabled="{Binding Paused}"  Style="{StaticResource EntryStyle}"/>
         </StackLayout>
         <!-- Break time -->
         <StackLayout  Orientation="Horizontal">
